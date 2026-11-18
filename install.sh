@@ -474,7 +474,7 @@ install_system_packages() {
         # Passwordless sudo — just install
         elif command -v sudo &> /dev/null && sudo -n true 2>/dev/null; then
             log_info "Installing ${pkgs[*]}..."
-            if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a $install_cmd; then
+            if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 $install_cmd; then
                 [ "$need_ripgrep" = true ] && HAS_RIPGREP=true && log_success "ripgrep installed"
                 [ "$need_ffmpeg" = true ]  && HAS_FFMPEG=true  && log_success "ffmpeg installed"
                 return 0
@@ -488,7 +488,7 @@ install_system_packages() {
                 read -p "Install ${description}? (requires sudo) [y/N] " -n 1 -r
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
-                    if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a $install_cmd; then
+                    if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 $install_cmd; then
                         [ "$need_ripgrep" = true ] && HAS_RIPGREP=true && log_success "ripgrep installed"
                         [ "$need_ffmpeg" = true ]  && HAS_FFMPEG=true  && log_success "ffmpeg installed"
                         return 0
@@ -503,7 +503,7 @@ install_system_packages() {
                 read -p "Install ${description}? [Y/n] " -n 1 -r < /dev/tty
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-                    if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a $install_cmd < /dev/tty; then
+                    if sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 $install_cmd < /dev/tty; then
                         [ "$need_ripgrep" = true ] && HAS_RIPGREP=true && log_success "ripgrep installed"
                         [ "$need_ffmpeg" = true ]  && HAS_FFMPEG=true  && log_success "ffmpeg installed"
                         return 0
@@ -681,7 +681,7 @@ install_deps() {
             log_info "Some build tools may be needed for Python packages..."
             if command -v sudo &> /dev/null; then
                 if sudo -n true 2>/dev/null; then
-                    sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y -qq build-essential python3-dev libffi-dev >/dev/null 2>&1 || true
+                    sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 apt-get install -y -qq build-essential python3-dev libffi-dev >/dev/null 2>&1 || true
                     log_success "Build tools installed"
                 else
                     log_info "sudo is needed ONLY to install build tools (build-essential, python3-dev, libffi-dev) via apt."
@@ -689,7 +689,7 @@ install_deps() {
                     read -p "Install build tools? [Y/n] " -n 1 -r < /dev/tty
                     echo
                     if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-                        sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y -qq build-essential python3-dev libffi-dev >/dev/null 2>&1 || true
+                        sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 apt-get install -y -qq build-essential python3-dev libffi-dev >/dev/null 2>&1 || true
                         log_success "Build tools installed"
                     fi
                 fi
@@ -895,7 +895,7 @@ install_node_deps() {
                 if command -v pacman &> /dev/null; then
                     log_info "Arch/Manjaro detected — installing Chromium system dependencies via pacman..."
                     if command -v sudo &> /dev/null && sudo -n true 2>/dev/null; then
-                        sudo NEEDRESTART_MODE=a pacman -S --noconfirm --needed \
+                        sudo NEEDRESTART_SUSPEND=1 pacman -S --noconfirm --needed \
                             nss atk at-spi2-core cups libdrm libxkbcommon mesa pango cairo alsa-lib >/dev/null 2>&1 || true
                     elif [ "$(id -u)" -eq 0 ]; then
                         pacman -S --noconfirm --needed \
