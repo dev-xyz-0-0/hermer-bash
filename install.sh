@@ -460,7 +460,7 @@ install_system_packages() {
 
         # Prevent needrestart/whiptail dialogs from blocking non-interactive installs
         case "$DISTRO" in
-            ubuntu|debian) export DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a ;;
+            ubuntu|debian) export DEBIAN_FRONTEND=noninteractive NEEDRESTART_SUSPEND=1 ;;
         esac
 
         # Already root — just install
